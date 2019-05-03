@@ -3,31 +3,26 @@ function [] = particle_filter_localization()
 close all;
 clear all;
 %parameters below are the testing mode
-test_mode = 4;
-if_using_prepared_data = 1;
-% -------------------------------------------------------------------------
+test_mode = 1;
+if_using_prepared_data = 0;
 %test_mode = 1: normal mode,
-    %particle number = 50, the program will generate the
-    % localization animation in the whole process
-% -------------------------------------------------------------------------
+%particle number = 50, the program will generate the
+% localization animation in the whole process
 % for that this mode below will take a lot of time, so We set the parameter
-    % if_using_prepared_data to shrink the run time by plot the prepared
-    % data
-% -------------------------------------------------------------------------
+% if_using_prepared_data to shrink the run time by plot the prepared
+% data
 % test_mode = 2: test runtime mode.
-    %particle number change from 50 to 500,
-    % it will generate the runtime-particle number image
-% -------------------------------------------------------------------------
+%particle number change from 50 to 500,
+% it will generate the runtime-particle number image
 % test_mode = 3: test average error mode.
-    %particle number change from 50 to 500,
-    % it will generate the average error-particle number image
-% -------------------------------------------------------------------------
+%particle number change from 50 to 500,
+% it will generate the average error-particle number image
 % test_mode = 4: error plot mode.
-    %particle number change from 50 to 500,
-    % when NP = 50 || 200 || 400, it will generate the whole
-    % error-localization process time(from 0 to 60) and the program will pause.
-    % input any key in the command window and the process will go on
-    % Also, it will generate the average error-particle number image in the end.
+%particle number change from 50 to 500,
+% when NP = 50 || 200 || 400, it will generate the whole
+% error-localization process time(from 0 to 60) and the program will pause.
+% input any key in the command window and the process will go on
+% Also, it will generate the average error-particle number image in the end.
 
 %PARTICLE_FILTER_LOCALIZATION Summary of this function goes here
 %   Detailed explanation goes here
@@ -72,7 +67,6 @@ for NP = 10:10:500
         title('run time chaning with particle numbers', 'fontsize', 12, 'fontname', 'times');
         xlabel('NP ', 'fontsize', 12, 'fontname', 'times');
         ylabel('localization time(s)', 'fontsize', 12, 'fontname', 'times');
-        disp('test mode 2 with data prepared done!')
         break;
     end
     if test_mode == 3 && if_using_prepared_data == 1
@@ -80,13 +74,11 @@ for NP = 10:10:500
         NP = linspace(10,500,50);
         load avgerror avgerror
         hold on
-        disp('test mode 3 with data prepared done!');
         %save avgerror avgerror
         plot(NP,avgerror,'-b','linewidth',4);
         title('average error of localization changing with particle numbers', 'fontsize', 12, 'fontname', 'times');
         xlabel('NP ', 'fontsize', 12, 'fontname', 'times');
         ylabel('average error(m)', 'fontsize', 12, 'fontname', 'times');
-        break;
     end
     t1=clock;
     time = 0;
@@ -112,12 +104,18 @@ for NP = 10:10:500
     Q=diag([0.1 0.1 toRadian(3)]).^2;
     % Covariance Matrix for observation
     R=diag([1]).^2;% range:meter
+    
+    
+    
     % landmark position
     landMarks=[10 0; 10 10; 0 15; -5 20];
+    
     % longest observation confined
     MAX_RANGE=20;
+    
     % Used in Resampling Step, a threshold
     NTh=NP/2.0;
+    
     % particles produced
     px=repmat(xEst,1,NP);  %3*NP
     % weights of particles produced
@@ -202,10 +200,8 @@ for NP = 10:10:500
         t2 = clock;
         t = etime(t2 , t1);
         runtime(it) = t;
+        disp(NP)
     end
-    NPstr = num2str(NP);
-    str1 = ['current particle number: ', NPstr];
-    disp(str1);
     %record the avgerror of localization when particle num is NP
     if test_mode == 3 || test_mode == 4
         avgerror(it) = average_error(localizer.xGnd,localizer.xEst);
@@ -214,7 +210,6 @@ for NP = 10:10:500
     if test_mode == 4
         if NP == 50 || NP == 200 || NP == 400
             drawErrors(localizer,NP);
-            disp('pausing, input any key to contiune!!')
             pause();
         end
     end
@@ -224,9 +219,8 @@ end
 
 %% plot run time chaning with particle numbers
 %
-% 
-if test_mode == 2 && if_using_prepared_data == 0
-    save runtime runtime
+% %save runtime runtime
+if test_mode == 2 && 
     NP = linspace(10,500,50);
     hold on
     plot(NP,runtime,'-b','linewidth', 4);
@@ -235,7 +229,7 @@ if test_mode == 2 && if_using_prepared_data == 0
     ylabel('localization time(s)', 'fontsize', 12, 'fontname', 'times');
 end
 %% plot average error of localization changing with particle numbers
-if (test_mode == 3 && if_using_prepared_data == 0) || test_mode == 4
+if test_mode == 3 || test_mode == 4
     clf;
     NP = linspace(10,500,50);
     hold on
@@ -316,7 +310,7 @@ for iz=1:length(landMarks(:,1))
     d = norm(xGnd(1:2)' - landMarks(iz,1:2));
     %d = sqrt((x(1) - landMarks(iz,1))^2 + (x(2) - landMarks(iz,2)^2));
     if d<MAX_RANGE
-        z = [z;[d+sqrt(Rsigma)*randn(1,1) landMarks(iz,:)]];   % add observation noise randomly
+        z=[z;[d+sqrt(Rsigma)*randn(1,1) landMarks(iz,:)]];   % add observation noise randomly
     end
 end
 end
