@@ -3,7 +3,7 @@ function [] = particle_filter_localization()
 close all;
 clear all;
 %parameters below are the testing mode
-test_mode = 3;
+test_mode = 1;
 if_using_prepared_data = 1;
 % -------------------------------------------------------------------------
 %test_mode = 1: normal mode,
