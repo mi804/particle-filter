@@ -3,7 +3,7 @@ function [] = particle_filter_localization()
 close all;
 clear all;
 %parameters below are the testing mode
-test_mode = 4;
+test_mode = 3;
 if_using_prepared_data = 1;
 % -------------------------------------------------------------------------
 %test_mode = 1: normal mode,
@@ -57,6 +57,15 @@ Rsigma=diag([0.1]).^2;
 runtime = zeros(1,50);
 avgerror = zeros(1,50);
 it = 1;
+if test_mode == 2 && if_using_prepared_data == 0
+    disp('testing mode 2 without prepared data!!')
+end
+if test_mode == 3 && if_using_prepared_data == 0
+    disp('testing mode 2 without prepared data!!')
+end
+if test_mode == 4
+    disp('testing mode 4 without prepared data!!')
+end
 for NP = 10:10:500
     %test_mode 1
     if test_mode == 1
@@ -65,6 +74,7 @@ for NP = 10:10:500
     end
     %test_mode 2 using prepared data
     if test_mode == 2 && if_using_prepared_data == 1
+        disp('testing mode 2 with prepared data done')
         load runtime runtime
         NP = linspace(10,500,50);
         hold on
@@ -224,7 +234,7 @@ end
 
 %% plot run time chaning with particle numbers
 %
-% 
+%
 if test_mode == 2 && if_using_prepared_data == 0
     save runtime runtime
     NP = linspace(10,500,50);
