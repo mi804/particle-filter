@@ -339,7 +339,6 @@ global dt;
 Delta = [ dt*cos(x(3)) 0;
     dt*sin(x(3)) 0;
     0 dt];
-% this is the basic move model ode
 x = x + Delta * u;
 
 end
